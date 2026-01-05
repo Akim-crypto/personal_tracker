@@ -14,15 +14,13 @@ def test_create_user():
     assert user.username == "test_user"
     assert storage.get_user().username == "test_user"
 
-
 def test_autosave_context():
     """Тест автосохранения через менеджер контекста."""
     storage = FileStorage("tests/test_data.json")
-    with storage.session():
-        user = storage.get_user()
+
+    with storage.session() as user:
         topic = Topic("Python", "Основы")
         user.add_topic(topic)
-    
-    # Проверяем, что данные сохранились
+
     reloaded_storage = FileStorage("tests/test_data.json")
     assert len(reloaded_storage.get_user().topics) == 1
