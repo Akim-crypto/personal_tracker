@@ -1,8 +1,7 @@
 """
-Точка входа FastAPI-приложения для персонального трекера прогресса.
+Точка входа FastAPI-приложения для персонального трекера.
 
-Приложение предоставляет REST API для работы с темами, ресурсами,
-заметками и прогрессом.
+Создаёт приложение, подключает роутеры и инициализирует базу данных.
 """
 
 from __future__ import annotations
@@ -10,6 +9,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from app.api.topics import router as topics_router
+from app.db.init_db import init_db
 
 
 def create_app() -> FastAPI:
@@ -19,10 +19,15 @@ def create_app() -> FastAPI:
     Returns:
         Инициализированный объект FastAPI.
     """
+    init_db()
+
     app = FastAPI(
         title="Personal Tracker API",
-        version="0.1.0",
-        description="API для управления темами, ресурсами и прогрессом обучения.",
+        version="0.2.0",
+        description=(
+            "API для управления темами, ресурсами и прогрессом обучения. "
+            "На этом этапе темы хранятся в SQLite через SQLAlchemy."
+        ),
     )
 
     app.include_router(topics_router)
@@ -30,10 +35,10 @@ def create_app() -> FastAPI:
     @app.get("/health")
     def health() -> dict:
         """
-        Простой health-check эндпоинт.
+        Эндпоинт проверки состояния сервиса.
 
         Returns:
-            Словарь со статусом сервиса.
+            Словарь со статусом приложения.
         """
         return {"status": "ok"}
 
